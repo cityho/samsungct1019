@@ -3,69 +3,103 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>공사 진행 · 직원 성과 비교 에이전트</title>
+<title>공사 진행 · 직원 성과 비교 에이전트 V2</title>
 <style>
-:root{--bg:#f4f6f9;--card:#fff;--ink:#1c2430;--mute:#6b7685;--line:#e3e8ee;--brand:#1f4e9c;--plan:#b8c4d6;--ok:#1a8f5a;--warn:#d98b00;--bad:#c93a3a}
+/* V2 플랫 디자인: 그림자·그라데이션·테두리선 없음, 단색 면과 여백으로만 구분 */
+:root{--bg:#eceff3;--card:#ffffff;--ink:#1b1f27;--mute:#6a7280;--soft:#f3f5f8;--track:#e1e5ea;--brand:#1f4e9c;--plan:#aab6c8;--ok:#2e9e6b;--warn:#e08a1e;--bad:#d64545}
 *{box-sizing:border-box}
 body{margin:0;font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
-header{background:var(--brand);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-header h1{margin:0;font-size:18px}
-header small{opacity:.8}
-.keybar{display:flex;gap:8px;align-items:center;font-size:12px}
-.keybar input{padding:6px 8px;border:0;border-radius:4px;font-size:12px}
-main{max-width:1280px;margin:0 auto;padding:20px;display:grid;gap:20px}
+header{background:var(--brand);color:#fff;padding:20px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.3px}
+header small{color:#c9d6ec}
+.badge{background:#173b78;color:#fff;padding:6px 12px;border-radius:2px;font-size:12px}
+main{max-width:1280px;margin:0 auto;padding:28px 20px 40px;display:grid;gap:32px}
 main>*{min-width:0}
-h2{font-size:15px;margin:0 0 10px}
-.sites{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px}
-.card .name{font-weight:700;font-size:15px}
-.card .meta{color:var(--mute);font-size:12px;margin-bottom:12px}
-.bar{height:10px;background:#eef1f5;border-radius:5px;margin:4px 0 10px;overflow:hidden}
+h2{font-size:16px;font-weight:800;margin:0 0 12px}
+h2 small{font-size:12px;font-weight:400;color:var(--mute)}
+.sites{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border-radius:2px;padding:20px}
+.card .name{font-weight:800;font-size:16px}
+.card .meta{color:var(--mute);font-size:12px;margin-bottom:14px}
+.bar{height:8px;background:var(--track);border-radius:0;margin:5px 0 12px;overflow:hidden}
 .bar>i{display:block;height:100%}
 .lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
 .lbl b{color:var(--ink)}
-.diff{font-weight:700}
-.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;color:#fff}
-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line)}
-th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);font-size:13px}
-th{background:#eef1f5;font-size:12px;color:var(--mute)}
-#emps{display:block;overflow-x:auto;white-space:nowrap}
+.diff{font-weight:800}
+.tag{display:inline-block;padding:2px 8px;border-radius:2px;font-size:11px;font-weight:700;color:#fff}
+table{width:100%;border-collapse:collapse;background:var(--card)}
+th,td{padding:10px 12px;text-align:left;font-size:13px}
+th{background:var(--track);font-size:12px;font-weight:700;color:var(--ink)}
+tr:nth-child(even) td{background:var(--soft)}
 td.n,th.n{text-align:right}
-tr:last-child td{border-bottom:0}
-.chat{display:flex;flex-direction:column;height:520px}
+.chat{display:flex;flex-direction:column;height:560px}
 .msgs{flex:1;overflow:auto;padding:4px 2px;display:flex;flex-direction:column;gap:10px}
-.m{max-width:85%;padding:10px 14px;border-radius:10px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.m{max-width:88%;padding:10px 14px;border-radius:2px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
 .m.u{align-self:flex-end;background:var(--brand);color:#fff}
-.m.a{align-self:flex-start;background:#eef1f5}
-.m.e{align-self:flex-start;background:#fdecec;color:var(--bad)}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.chips button{background:#fff;border:1px solid var(--brand);color:var(--brand);padding:6px 12px;border-radius:16px;cursor:pointer;font-size:12px}
+.m.a{align-self:flex-start;background:var(--soft)}
+.m .why{display:block;color:var(--mute);font-size:11px;margin-bottom:4px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chips button{background:#e3ebf7;border:0;color:var(--brand);padding:7px 14px;border-radius:2px;cursor:pointer;font-size:12px;font-weight:700}
 .chips button.rep{background:var(--brand);color:#fff}
-.chips button:hover{opacity:.85}
+.chips button:hover{filter:brightness(.95)}
 .in{display:flex;gap:8px}
-.in input{flex:1;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:14px}
-.in button{padding:0 20px;background:var(--brand);color:#fff;border:0;border-radius:6px;cursor:pointer}
-.in button:disabled{opacity:.5}
-.note{color:var(--mute);font-size:12px;margin-top:6px}
+.in input{flex:1;padding:12px;border:0;background:var(--soft);border-radius:2px;font-size:14px}
+.in input:focus,.note-card textarea:focus{outline:2px solid var(--brand);outline-offset:-2px}
+.in button{padding:0 24px;background:var(--brand);color:#fff;border:0;border-radius:2px;cursor:pointer;font-weight:700}
+.note{color:var(--mute);font-size:12px;margin-top:8px;line-height:1.6}
+.sn{margin-top:14px;padding:12px 14px;border-radius:2px;font-size:12px;line-height:1.6}
+.sn ul{margin:4px 0 0;padding-left:18px}
+.sn.good{background:#e9f4ee}
+.sn.good>b{color:var(--ok)}
+.sn.fix{background:#f8efe2}
+.sn.fix>b{color:#b36f00}
+.sn .cv{margin-top:6px;color:var(--mute)}
+#rank{display:block;overflow-x:auto;white-space:nowrap}
+.rankwrap{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start}
+@media(max-width:1000px){.rankwrap{grid-template-columns:minmax(0,1fr)}}
+#rank td.nm{cursor:pointer;color:var(--brand);font-weight:800}
+#rank td.nm:hover{text-decoration:underline}
+#rank tr.sel td{background:#d9e5f7}
+#radar{position:sticky;top:12px;padding:16px;text-align:center}
+#radar .ph{color:var(--mute);font-size:13px;padding:90px 10px;line-height:1.7}
+#radar .rt{font-weight:800;font-size:15px}
+#radar .rs{color:var(--mute);font-size:12px;margin-bottom:2px}
+#radar svg{width:100%;height:auto;max-width:360px}
+#radar .lg{display:flex;justify-content:center;gap:14px;font-size:11px;color:var(--mute);margin:2px 0 8px}
+#radar .lg i{display:inline-block;width:10px;height:10px;vertical-align:-1px;margin-right:4px}
+#radar table{font-size:12px;display:table;white-space:normal}
+#radar th,#radar td{padding:5px 8px;font-size:12px}
+#radar .ref{color:var(--mute);font-size:11px;text-align:left;margin-top:8px;line-height:1.5}
+.sc{display:inline-block;width:70px;height:8px;background:var(--track);border-radius:0;vertical-align:middle;margin-right:6px;overflow:hidden}
+.sc>i{display:block;height:100%;background:var(--brand)}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.note-card .nh{margin-bottom:10px}
+.note-card .nh span{color:var(--mute);font-size:12px;margin-left:6px}
+.note-card textarea{width:100%;border:0;background:var(--soft);border-radius:2px;padding:12px;font:inherit;font-size:13px;line-height:1.6;resize:vertical}
+.note-card .nb{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;color:var(--mute)}
+.note-card .nb button{background:var(--track);color:var(--ink);border:0;border-radius:2px;padding:4px 10px;cursor:pointer;font-size:12px}
+
 </style>
 </head>
 <body>
 <header>
   <div><h1>공사 진행 · 직원 성과 비교 에이전트</h1><small>기준일 <span id="today"></span> · 더미데이터</small></div>
-  <div class="keybar">
-    <label title="local_server.py 실행 필요 (API 키 불필요)"><input type="checkbox" id="local"> 로컬 Claude 사용</label>
-    <label>API 키 <input id="key" type="password" placeholder="sk-ant-..." size="22"></label>
-    <label>모델 <input id="model" size="16"></label>
-  </div>
+  <span class="badge">규칙·정규식 기반 분석 (외부 API 미사용)</span>
 </header>
 <main>
   <section><h2>현장별 공사 진행 현황</h2><div class="sites" id="sites"></div></section>
-  <section><h2>직원별 업무 달성 vs 담당 공정</h2><table id="emps"></table>
-    <div class="note">불일치: 달성률 95% 이상인데 담당 공정이 20일 이상 지연(평가 과대 의심), 또는 달성률 85% 미만인데 담당 공정이 지연 없음(평가 과소 의심). 안전관리 직원은 담당 공정이 없어 제외.</div></section>
-  <section class="card chat"><h2>AI 분석 채팅</h2>
+  <section><h2>직원별 업무 달성 vs 담당 공정 · 성과 점수 순위 <small style="font-weight:400;color:var(--mute)">— 이름을 누르면 오른쪽에 6각형 그래프가 나옵니다</small></h2>
+    <div class="rankwrap"><table id="rank"></table><div class="card" id="radar"></div></div>
+    <div class="note">판정(불일치): 달성률 95% 이상인데 담당 공정이 20일 이상 지연(평가 과대 의심), 또는 달성률 85% 미만인데 담당 공정이 지연 없음(평가 과소 의심). 안전관리 직원은 담당 공정이 없어 제외.</div>
+    <div class="note">종합 점수(100점) = KPI 달성 40 + 공정 준수 30 + 안전 15 + 성장 추세 15. 각 항목은 0~100점으로 환산: KPI는 평균 달성률 110%를 만점, 공정 준수는 담당 공정 지연 1일당 -1.5점, 안전은 본인 사고 1건당 -20점, 성장 추세는 첫 달 대비 마지막 달 달성률 변화 1%p당 ±2.5점(50점 기준). 안전관리 직원은 담당 공정이 없어 '공정 준수' 칸을 소속 현장 사고 1건당 -12점으로 대신 환산. 가중치와 환산식은 임의 설정값(미확인)이며 회사 평가 기준이 아닙니다.</div></section>
+  <section><h2>칭찬 문구 (상위 3명)</h2><div class="notes" id="praise"></div>
+    <div class="note">데이터로 자동 작성한 초안입니다. 직접 수정할 수 있고, 수정본은 이 브라우저에만 저장됩니다. 어디로도 발송되지 않습니다.</div></section>
+  <section><h2>코칭 조언 (하위 3명)</h2><div class="notes" id="coach"></div>
+    <div class="note">점수가 낮다는 것은 평가 확정이 아니라 면담 준비용 참고입니다. 외부요인으로 인한 지연은 개인 책임으로 단정하지 마세요. 반드시 담당 상급자가 원본과 대조한 뒤 수정해서 사용합니다.</div></section>
+  <section class="card chat"><h2>분석 에이전트</h2>
     <div class="msgs" id="msgs"></div>
     <div class="chips" id="chips"></div>
-    <div class="in"><input id="q" placeholder="예: 한강 오피스 타워 지연의 원인과 담당자 성과는?"><button id="send">전송</button></div>
+    <div class="in"><input id="q" placeholder="예: 정다은 평가가 실제 공정과 맞아? / 한강 오피스 타워 지연 원인은? / 안전사고 현황"><button id="send">전송</button></div>
   </section>
 </main>
 <script>
@@ -74,9 +108,18 @@ const TODAY = "2026-10-19";
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+const day = s => new Date(s + "T00:00:00Z").getTime() / 864e5;
+const addDays = (s, n) => new Date((day(s) + n) * 864e5).toISOString().slice(0,10);
 $("today").textContent = TODAY;
 
-// ---- 집계 ----
+// ================= 집계 =================
+const empById = id => DATA.employees.find(e => e.emp_id === id);
+const siteById = id => DATA.sites.find(s => s.site_id === id);
+const siteName = id => siteById(id)["현장명"];
+const isLate = t => t["지연일수"] > 0 || t["상태"] === "지연";
+const EXTERNAL = /자재|우천|설계|선행/;           // 담당자 통제 밖일 가능성이 큰 지연 사유
+const kind = t => EXTERNAL.test(t["지연사유"] || "") ? "외부요인" : "관리요인";
+
 const stats = DATA.employees.map(e => {
   const ev = DATA.evaluations.filter(x => x.emp_id === e.emp_id);
   const ts = DATA.tasks.filter(t => t["담당자_id"] === e.emp_id);
@@ -88,11 +131,71 @@ const stats = DATA.employees.map(e => {
     if (rate >= 95 && delay >= 20) flag = "평가 과대 의심";
     else if (rate < 85 && delay === 0) flag = "평가 과소 의심";
   }
-  return {...e, rate, delay, nTasks: ts.length, grade: latest["등급"], incidents: ev.reduce((s,x)=>s+x["안전사고건수"],0), flag};
+  return {...e, ev, ts, rate, delay, grade: latest["등급"], comment: latest["상급자코멘트"],
+          incidents: ev.reduce((s,x)=>s+x["안전사고건수"],0), flag};
 });
-const siteName = id => DATA.sites.find(s => s.site_id === id)["현장명"];
+const sx = id => stats.find(s => s.emp_id === id);
 
-// ---- 대시보드 ----
+// ---- 종합 점수 (0~100). 가중치·환산식은 출처 없는 임의 설정값(미확인) ----
+const W = {kpi: 40, proc: 30, safe: 15, trend: 15};
+const COMP_LABEL = {kpi: "KPI 달성", proc: "공정 준수", safe: "안전", trend: "성장 추세"};
+const clamp = x => Math.max(0, Math.min(100, x));
+const siteInc = id => stats.filter(x => x.site_id === id).reduce((a,x) => a + x.incidents, 0);
+stats.forEach(s => {
+  const first = s.ev.length ? s.ev[0]["달성률(%)"] : s.rate, lastR = s.ev.length ? s.ev[s.ev.length-1]["달성률(%)"] : s.rate;
+  s.trend = lastR - first;
+  s.comp = {
+    kpi: clamp(s.rate / 110 * 100),                                   // 평균 달성률 110%를 만점으로 환산
+    proc: s["직책"] === "안전관리" ? clamp(100 - siteInc(s.site_id) * 12)  // 안전관리: 소속 현장 사고 1건당 -12점
+                                  : clamp(100 - s.delay * 1.5),          // 그 외: 담당 공정 지연 1일당 -1.5점
+    safe: clamp(100 - s.incidents * 20),                              // 본인 사고 1건당 -20점
+    trend: clamp(50 + s.trend * 2.5),                                 // 첫 달 대비 마지막 달 달성률 변화 1%p당 ±2.5점
+  };
+  s.score = (s.comp.kpi * W.kpi + s.comp.proc * W.proc + s.comp.safe * W.safe + s.comp.trend * W.trend) / 100;
+});
+const ranked = [...stats].sort((a,b) => b.score - a.score || a["이름"].localeCompare(b["이름"], "ko"));
+ranked.forEach((s,i) => s.rank = i + 1);
+const top3 = ranked.slice(0,3), bottom3 = ranked.slice(-3).reverse();   // 하위 3명은 낮은 순위부터
+
+// 현장 예상 준공일: 현재까지의 평균 속도가 유지된다고 가정
+function projection(s){
+  const act = s["실제공정률(%)"];
+  if (act <= 0) return null;
+  const elapsed = day(TODAY) - day(s["착공일"]);
+  const planned = day(s["준공예정일"]) - day(s["착공일"]);
+  const total = elapsed / (act / 100);
+  return {delay: Math.round(total - planned), end: addDays(s["착공일"], Math.round(total))};
+}
+
+// ---- 현장별 잘하는 점 / 보완할 점 (공정률이 계획보다 앞서거나 같으면 잘하는 점, 늦으면 보완할 점) ----
+function siteNotes(s){
+  const ts = DATA.tasks.filter(t => t.site_id === s.site_id), staff = stats.filter(x => x.site_id === s.site_id).sort((a,b) => a.rank - b.rank);
+  const d = s["차이(%p)"], lates = ts.filter(t => t["지연일수"] > 0).sort((a,b) => b["지연일수"] - a["지연일수"]);
+  const inc = siteInc(s.site_id), pr = projection(s), items = [];
+  if (d >= 0) {
+    items.push(`계획 ${s["계획공정률(%)"]}% 대비 실제 ${s["실제공정률(%)"]}% (${d > 0 ? "+" : ""}${d}%p) — ${d > 0 ? "계획보다 앞서 진행 중" : "계획대로 진행 중"}`);
+    const done = ts.filter(t => t["상태"] === "완료"), onTime = done.filter(t => t["지연일수"] === 0);
+    if (done.length) items.push(`완료 공정 ${done.length}개 중 ${onTime.length}개를 지연 없이 마무리`);
+    items.push(`종합 점수 최고: ${staff[0]["이름"]}(${staff[0]["직책"]}) ${staff[0].score.toFixed(1)}점`);
+    const minInc = Math.min(...DATA.sites.map(x => siteInc(x.site_id)));
+    if (inc === minInc) items.push(`안전사고 ${inc}건으로 ${DATA.sites.length}개 현장 중 가장 적음`);
+    const caveat = lates.length ? `다만 지연 경험 공정 ${lates.length}개(${lates.map(t => `${t["공정명"]} ${t["지연일수"]}일, ${t["지연사유"]}`).join(" / ")})는 확인이 필요합니다.` : "";
+    return {good: true, items, caveat};
+  }
+  items.push(`계획 ${s["계획공정률(%)"]}% 대비 실제 ${s["실제공정률(%)"]}% (${d}%p)` + (pr && pr.delay > 3 ? ` — 현재 속도면 준공이 약 ${pr.delay}일 늦어질 것으로 예상` : ""));
+  lates.slice(0,3).forEach(t => items.push(`${t["공정명"]} ${t["지연일수"]}일 지연(${t["지연사유"]}, 담당 ${empById(t["담당자_id"])["이름"]}) — ` +
+    (kind(t) === "외부요인" ? "외부요인이므로 일정 여유·대체 작업 등 사전 대비 필요" : "인력·협력업체 일정 점검 필요")));
+  const low = staff.filter(x => x.ts.length && x.rate < 90);
+  if (low.length) items.push(`달성률 90% 미만 담당자 ${low.map(x => `${x["이름"]}(${x.rate.toFixed(1)}%)`).join(", ")} — 지원 인력·코칭 필요`);
+  if (inc >= 3) items.push(`안전사고 ${inc}건 — 사고 다발 구간 점검 필요`);
+  return {good: false, items, caveat: ""};
+}
+function siteNotesHtml(s){
+  const n = siteNotes(s);
+  return `<div class="sn ${n.good ? "good" : "fix"}"><b>${n.good ? "잘하는 점" : "보완할 점"}</b><ul>${n.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>${n.caveat ? `<div class="cv">※ ${esc(n.caveat)}</div>` : ""}</div>`;
+}
+
+// ================= 대시보드 =================
 $("sites").innerHTML = DATA.sites.map(s => {
   const d = s["차이(%p)"], col = d <= -3 ? "var(--bad)" : d < 0 ? "var(--warn)" : "var(--ok)";
   const late = DATA.tasks.filter(t => t.site_id === s.site_id && t["지연일수"] > 0).length;
@@ -100,133 +203,342 @@ $("sites").innerHTML = DATA.sites.map(s => {
   <div class="meta">${esc(s["유형"])} · ${s["착공일"]} ~ ${s["준공예정일"]}</div>
   <div class="lbl"><span>계획 공정률</span><b>${s["계획공정률(%)"]}%</b></div><div class="bar"><i style="width:${s["계획공정률(%)"]}%;background:var(--plan)"></i></div>
   <div class="lbl"><span>실제 공정률</span><b>${s["실제공정률(%)"]}%</b></div><div class="bar"><i style="width:${s["실제공정률(%)"]}%;background:${col}"></i></div>
-  <div class="lbl"><span>차이 <span class="diff" style="color:${col}">${d>0?"+":""}${d}%p</span></span><span>지연 경험 공정 <b>${late}</b>개</span></div></div>`;
+  <div class="lbl"><span>차이 <span class="diff" style="color:${col}">${d>0?"+":""}${d}%p</span></span><span>지연 경험 공정 <b>${late}</b>개</span></div>${siteNotesHtml(s)}</div>`;
 }).join("");
 
 const gc = g => ({S:"var(--ok)",A:"#2f7fd0",B:"var(--warn)",C:"var(--bad)"}[g]||"#999");
-$("emps").innerHTML = `<tr><th>이름</th><th>직책</th><th>현장</th><th class="n">평균 달성률</th><th>최근 등급</th><th class="n">안전사고</th><th class="n">담당 공정</th><th class="n">지연 일수 합</th><th>판정</th></tr>` +
-  stats.map(s => `<tr><td>${esc(s["이름"])}</td><td>${esc(s["직책"])}</td><td>${esc(siteName(s.site_id))}</td>
+
+// ================= 에이전트: 응답 생성기 =================
+const taskLine = t => { const s = sx(t["담당자_id"]);
+  return `${siteName(t.site_id)} ${t["공정명"]} — ${t["지연일수"]}일 지연 (${t["지연사유"]||"사유 미기재"}, ${kind(t)})\n     담당 ${s["이름"]}(${s["직책"]}): 달성률 ${s.rate.toFixed(1)}%, ${s.grade}등급`; };
+
+function empDetail(e){
+  const s = sx(e.emp_id), L = [`■ ${s["이름"]} (${s["직책"]}, ${siteName(s.site_id)})`];
+  L.push("• 월별 달성률: " + s.ev.map(x => `${x["평가월"].slice(5)}월 ${x["달성률(%)"]}%(${x["등급"]})`).join(" → "));
+  const dv = s.ev.length > 1 ? s.ev[s.ev.length-1]["달성률(%)"] - s.ev[0]["달성률(%)"] : 0;
+  L.push(`• 종합 점수 ${s.score.toFixed(1)}점 (${s.rank}위/${DATA.employees.length}명) — ${compLine(s)}`);
+  L.push(`• 평균 ${s.rate.toFixed(1)}% · 추세 ${dv >= 5 ? "상승" : dv <= -5 ? "하락" : "유지"} · 안전사고 ${s.incidents}건`);
+  L.push(`• 상급자 코멘트: ${s.comment}`);
+  if (s.ts.length) {
+    L.push("• 담당 공정:");
+    s.ts.forEach(t => L.push(`   - ${t["공정명"]}: ${t["상태"]} ${t["진행률(%)"]}%` + (t["지연일수"] ? `, ${t["지연일수"]}일 지연(${t["지연사유"]})` : "")));
+    let v;
+    if (s.flag) v = `⚠ ${s.flag}: 달성률 ${s.rate.toFixed(1)}%인데 담당 공정 ${s.delay}일 지연. KPI와 공정 준수 지표의 연동을 확인하세요.`;
+    else if (s.rate < 90 && s.delay > 0) v = "성과 저조와 공정 지연이 함께 나타나 평가와 현장 실적이 일치합니다.";
+    else if (s.rate >= 95 && s.delay < 20) v = "높은 성과와 공정 진행이 대체로 일치합니다.";
+    else v = "평가와 공정 실적 사이에 뚜렷한 불일치는 없습니다.";
+    L.push("• 판정: " + v);
+  } else L.push(`• 담당 공정 없음(${s["직책"]}). 소속 현장 ${siteName(s.site_id)}의 안전사고 합계 ${stats.filter(x=>x.site_id===s.site_id).reduce((a,x)=>a+x.incidents,0)}건`);
+  return L.join("\n");
+}
+
+function siteDetail(s, full){
+  const ts = DATA.tasks.filter(t => t.site_id === s.site_id), pr = projection(s), d = s["차이(%p)"];
+  const cnt = k => ts.filter(t => t["상태"] === k).length;
+  const staff = stats.filter(x => x.site_id === s.site_id), lates = ts.filter(isLate);
+  const projTxt = pr && pr.delay > 3 ? `현재 속도라면 준공 ${pr.end} (약 ${pr.delay}일 지연 예상)` : "현재 속도라면 예정 준공일 내 완료 가능";
+  const L = [`■ ${s["현장명"]} (${s["유형"]}, ${s["착공일"]} ~ ${s["준공예정일"]})`,
+    `• 공정률 계획 ${s["계획공정률(%)"]}% / 실제 ${s["실제공정률(%)"]}% (${d>0?"+":""}${d}%p) — ${projTxt}`];
+  if (full) L.push(`• 공정 ${ts.length}개: 완료 ${cnt("완료")} · 진행중 ${cnt("진행중")} · 지연 ${cnt("지연")} · 예정 ${cnt("예정")}`);
+  L.push("• 지연 공정: " + (lates.length ? lates.map(t => `${t["공정명"]}(${empById(t["담당자_id"])["이름"]}, ${t["지연일수"]}일)`).join(", ") : "없음"));
+  L.push(`• 직원 평균 달성률 ${avg(staff.map(x=>x.rate)).toFixed(1)}% · 최저 ${staff.reduce((a,b)=>a.rate<b.rate?a:b)["이름"]} ${Math.min(...staff.map(x=>x.rate)).toFixed(1)}%`);
+  return L.join("\n");
+}
+
+function cause(sites){
+  const late = DATA.tasks.filter(t => t["지연일수"] > 0 && (!sites.length || sites.some(s => s.site_id === t.site_id))).sort((a,b) => b["지연일수"]-a["지연일수"]);
+  if (!late.length) return "해당 범위에 지연된 공정이 없습니다.";
+  const mg = late.filter(t => kind(t) === "관리요인"), ex = late.filter(t => kind(t) === "외부요인");
+  const L = [`지연 공정 ${late.length}건(합계 ${late.reduce((s,t)=>s+t["지연일수"],0)}일)을 지연일수 순으로 담당자 성과와 연결했습니다.`];
+  late.forEach((t,i) => L.push(`${i+1}. ${taskLine(t)}`));
+  L.push(`\n사유 분류: 관리요인 ${mg.length}건 / 외부요인(자재·우천·설계변경·선행공정) ${ex.length}건`);
+  const lowOwners = [...new Set(late.filter(t => sx(t["담당자_id"]).rate < 90).map(t => sx(t["담당자_id"])["이름"]))];
+  const highOwners = [...new Set(ex.filter(t => sx(t["담당자_id"]).rate >= 95).map(t => sx(t["담당자_id"])["이름"]))];
+  if (lowOwners.length) L.push(`• 달성률 90% 미만 담당자의 지연: ${lowOwners.join(", ")} → 성과와 지연이 일치`);
+  if (highOwners.length) L.push(`• 달성률 95% 이상인데 외부요인으로 지연: ${highOwners.join(", ")} → 개인 역량 문제로 보기 어려워 평가 시 분리 검토 필요`);
+  return L.join("\n");
+}
+
+function mismatch(){
+  const fl = stats.filter(s => s.flag);
+  const L = ["평가 결과와 담당 공정 실적을 비교했습니다. (기준: 달성률 95%↑ & 지연 20일↑ = 과대 / 달성률 85%↓ & 지연 없음 = 과소)"];
+  if (fl.length) { L.push("\n[불일치]"); fl.forEach(s => L.push(`• ${s["이름"]}(${siteName(s.site_id)}) — ${s.flag}: 달성률 ${s.rate.toFixed(1)}%(${s.grade}등급), 담당 공정 지연 ${s.delay}일\n   ` + s.ts.filter(t=>t["지연일수"]>0).map(t=>`${t["공정명"]} ${t["지연일수"]}일(${t["지연사유"]})`).join(" / "))); }
+  else L.push("\n[불일치] 해당 직원 없음");
+  const ok = stats.filter(s => s.ts.length && !s.flag && s.rate < 90 && s.delay > 0);
+  if (ok.length) L.push("\n[일치: 성과 저조 + 지연]\n" + ok.map(s => `• ${s["이름"]} — 달성률 ${s.rate.toFixed(1)}%, 지연 ${s.delay}일`).join("\n"));
+  const noTask = stats.filter(s => !s.ts.length).map(s => s["이름"]);
+  L.push(`\n※ 담당 공정이 없어 비교 제외: ${noTask.join(", ")} (안전관리)`);
+  return L.join("\n");
+}
+
+function risk(){
+  const rows = DATA.sites.map(s => {
+    const ts = DATA.tasks.filter(t => t.site_id === s.site_id), lates = ts.filter(t => t["지연일수"] > 0);
+    const staff = stats.filter(x => x.site_id === s.site_id), low = staff.filter(x => x.ts.length && x.rate < 90);
+    const inc = staff.reduce((a,x)=>a+x.incidents,0), pr = projection(s);
+    const score = Math.max(0, -s["차이(%p)"]) * 5 + lates.length * 8 + low.length * 8 + Math.max(0, inc - 2) * 3 + (pr && pr.delay > 0 ? pr.delay / 2 : 0);
+    return {s, lates, low, inc, pr, score, level: score >= 30 ? "높음" : score >= 12 ? "보통" : "낮음"};
+  }).sort((a,b) => b.score - a.score);
+  const L = ["현장별 위험도를 (공정률 차이, 지연 공정 수, 저성과 담당자, 안전사고, 예상 준공 지연)으로 점수화했습니다.\n"];
+  rows.forEach((r,i) => {
+    L.push(`${i+1}. ${r.s["현장명"]} — 위험도 ${r.level} (점수 ${r.score.toFixed(0)})`);
+    L.push(`   공정률 ${r.s["차이(%p)"]}%p · 지연 공정 ${r.lates.length}건 · 저성과 담당자 ${r.low.length}명${r.low.length?"("+r.low.map(x=>x["이름"]).join(", ")+")":""} · 안전사고 ${r.inc}건` + (r.pr && r.pr.delay > 3 ? ` · 예상 준공 ${r.pr.end}(+${r.pr.delay}일)` : ""));
+  });
+  const top = rows[0], act = [];
+  if (top.lates.length) act.push(`지연 공정(${top.lates.map(t=>t["공정명"]).join(", ")}) 담당자와 주간 일정 점검, 후속 공정 일정 재산정`);
+  if (top.low.length) act.push(`저성과 담당자(${top.low.map(x=>x["이름"]).join(", ")})에게 선행 공정 관리 지원 인력 배치`);
+  if (top.inc >= 3) act.push("안전사고 다발 구간 특별 점검");
+  if (act.length) L.push(`\n가장 위험한 현장 '${top.s["현장명"]}' 권장 조치\n` + act.map((a,i)=>`${i+1}. ${a}`).join("\n"));
+  return L.join("\n");
+}
+
+function rank(byDelay){
+  const withTask = stats.filter(s => s.ts.length);
+  if (byDelay) { const r = [...withTask].sort((a,b)=>b.delay-a.delay).filter(s=>s.delay>0);
+    return "담당 공정 지연일수 순위\n" + r.map((s,i)=>`${i+1}. ${s["이름"]}(${siteName(s.site_id)}) ${s.delay}일 · 달성률 ${s.rate.toFixed(1)}%(${s.grade})`).join("\n"); }
+  const r = [...stats].sort((a,b)=>b.rate-a.rate), f = s => `${s["이름"]}(${s["직책"]}, ${siteName(s.site_id)}) ${s.rate.toFixed(1)}% ${s.grade}`;
+  return "평균 달성률 순위\n[상위 3]\n" + r.slice(0,3).map((s,i)=>`${i+1}. ${f(s)}`).join("\n") + "\n[하위 3]\n" + r.slice(-3).reverse().map((s,i)=>`${i+1}. ${f(s)}`).join("\n");
+}
+
+function scoreRank(){
+  const L = ["종합 점수 순위 (KPI 달성 40 · 공정 준수 30 · 안전 15 · 성장 추세 15 — 임의 가중치, 미확인)"];
+  ranked.forEach(s => L.push(`${s.rank}위 ${s["이름"]}(${s["직책"]}, ${siteName(s.site_id)}) ${s.score.toFixed(1)}점 — ${compLine(s)}`));
+  L.push(`\n칭찬 대상(상위 3): ${top3.map(s=>s["이름"]).join(", ")}\n코칭 대상(하위 3): ${bottom3.map(s=>s["이름"]).join(", ")}`);
+  L.push("\n'칭찬 문구', '코칭 조언' 또는 '한상훈 코칭 조언'처럼 물어보면 초안을 보여드립니다.");
+  const sm = ranked.filter(s => s["직책"] === "안전관리" && s.rank > ranked.length / 2);
+  if (sm.length) L.push(`※ 안전관리 직원(${sm.map(s=>s["이름"]).join(", ")})은 담당 공정이 없어 소속 현장 사고 건수로 '공정' 칸을 환산했습니다. 등급과 순위가 어긋날 수 있습니다.`);
+  return L.join("\n");
+}
+
+function safety(){
+  const inc = stats.filter(s => s.incidents > 0).sort((a,b)=>b.incidents-a.incidents);
+  const L = ["안전사고 현황(최근 3개월 평가 기준)"];
+  DATA.sites.forEach(s => L.push(`• ${s["현장명"]}: ${stats.filter(x=>x.site_id===s.site_id).reduce((a,x)=>a+x.incidents,0)}건`));
+  L.push("\n[발생 직원] " + (inc.length ? inc.map(s => `${s["이름"]} ${s.incidents}건`).join(", ") : "없음"));
+  const sm = stats.filter(s => s["직책"] === "안전관리");
+  L.push("[안전관리 담당] " + sm.map(s => `${s["이름"]}(${siteName(s.site_id)}) 달성률 ${s.rate.toFixed(1)}%·${s.grade}등급`).join(", "));
+  const worst = DATA.sites.map(s => [s, stats.filter(x=>x.site_id===s.site_id).reduce((a,x)=>a+x.incidents,0)]).sort((a,b)=>b[1]-a[1])[0];
+  const m = sm.find(x => x.site_id === worst[0].site_id);
+  if (worst[1] > 0 && m && m.rate >= 100) L.push(`\n※ 사고가 가장 많은 '${worst[0]["현장명"]}'의 안전관리 담당 ${m["이름"]}달성률이 ${m.rate.toFixed(1)}%로 높습니다. 안전 KPI가 실제 사고율을 반영하는지 점검이 필요합니다.`);
+  return L.join("\n");
+}
+
+function procDetail(name){
+  const ts = DATA.tasks.filter(t => t["공정명"] === name);
+  return `■ ${name} (${ts.length}개 현장)\n` + ts.map(t => { const s = sx(t["담당자_id"]);
+    return `• ${siteName(t.site_id)}: ${t["상태"]} ${t["진행률(%)"]}%` + (t["지연일수"] ? `, ${t["지연일수"]}일 지연(${t["지연사유"]})` : "") + ` — 담당 ${s["이름"]} ${s.rate.toFixed(1)}%(${s.grade})`; }).join("\n");
+}
+
+function report(){
+  const worst = [...DATA.sites].sort((a,b)=>a["차이(%p)"]-b["차이(%p)"])[0];
+  const late = DATA.tasks.filter(t=>t["지연일수"]>0), fl = stats.filter(s=>s.flag);
+  return [`종합 리포트 (기준일 ${TODAY})`,
+    `\n1) 총평\n현장 ${DATA.sites.length}곳 중 계획 대비 뒤처진 곳은 ${DATA.sites.filter(s=>s["차이(%p)"]<0).length}곳이며 가장 큰 차이는 ${worst["현장명"]} ${worst["차이(%p)"]}%p입니다. 지연 공정은 ${late.length}건(${late.reduce((s,t)=>s+t["지연일수"],0)}일), 평가 불일치 직원은 ${fl.length}명입니다.`,
+    "\n2) 현장별 현황\n" + DATA.sites.map(s => siteDetail(s, false)).join("\n\n"),
+    "\n3) 성과-공정 정합성\n" + mismatch().split("\n").slice(1).join("\n"),
+    "\n4) 위험도 및 조치\n" + risk(),
+    "\n5) 성과 점수 순위\n" + scoreRank()].join("\n");
+}
+
+// ================= 질문 해석 (정규식) =================
+const siteKeys = s => [...s["현장명"].split(/\s+/), s["유형"], s.site_id].map(k => k.toLowerCase());
+const procNames = [...new Set(DATA.tasks.map(t => t["공정명"]))];
+const findSites = q => DATA.sites.filter(s => siteKeys(s).some(k => q.includes(k)));
+const findEmps = q => DATA.employees.filter(e => q.includes(e["이름"]) || q.includes(e["이름"].slice(1)) || q.includes(e.emp_id.toLowerCase()));
+const findProc = q => procNames.find(p => q.includes(p) || (p.replace(/공사$/, "").length >= 2 && q.includes(p.replace(/공사$/, ""))));
+const RE = {
+  report: /리포트|보고서|종합\s*(현황|분석|보고)|전체\s*(현황|분석)|총평/,
+  mismatch: /불일치|과대|과소|맞지\s*않|안\s*맞|일치|정합|괴리|신뢰/,
+  risk: /위험|리스크|우려|준공|예측|전망|예상|심각|문제\s*현장/,
+  cause: /원인|사유|이유|왜|지연|늦|밀린|밀렸/,
+  coach: /코칭|조언|개선\s*방안|면담/,
+  praise: /칭찬|격려|포상|표창/,
+  score: /점수|순위|랭킹|top|최고|최저|우수|저조|잘하|못하|best|worst/i,
+  safety: /안전|사고|재해/,
+  site: /현황|요약|진행|공정률|현장/,
+};
+let last = {emp: null, site: null};
+
+function answer(q){
+  const t = q.trim().toLowerCase();
+  let emps = findEmps(t), sites = findSites(t);
+  if (!emps.length && !sites.length && /그\s*(직원|사람|분)|해당\s*직원|이\s*직원/.test(t) && last.emp) emps = [last.emp];
+  if (!sites.length && !emps.length && /그\s*현장|해당\s*현장|이\s*현장/.test(t) && last.site) sites = [last.site];
+  const proc = findProc(t);
+  if (emps[0]) last.emp = emps[0]; if (sites[0]) last.site = sites[0];
+  const out = (why, body) => ({why, body});
+  if (RE.report.test(t)) return out("종합 리포트", report());
+  if (emps.length && RE.coach.test(t)) return out("코칭 조언 초안: " + emps.map(e=>e["이름"]).join(", "), emps.slice(0,3).map(e => coachDraft(sx(e.emp_id))).join("\n\n"));
+  if (emps.length && RE.praise.test(t)) return out("칭찬 문구 초안: " + emps.map(e=>e["이름"]).join(", "), emps.slice(0,3).map(e => praiseDraft(sx(e.emp_id))).join("\n\n"));
+  if (RE.coach.test(t)) return out("코칭 조언 초안 (하위 3명)", bottom3.map(coachDraft).join("\n\n────────\n\n"));
+  if (RE.praise.test(t)) return out("칭찬 문구 초안 (상위 3명)", top3.map(praiseDraft).join("\n\n────────\n\n"));
+  if (emps.length) return out(`직원 상세 분석: ${emps.map(e=>e["이름"]).join(", ")}`, emps.slice(0,3).map(empDetail).join("\n\n"));
+  if (RE.mismatch.test(t)) return out("성과-공정 불일치 탐지", mismatch());
+  if (RE.risk.test(t)) return out("현장 위험도 평가", risk());
+  if (RE.score.test(t)) return /지연/.test(t) ? out("지연일수 순위", rank(true)) : /달성률/.test(t) ? out("달성률 순위", rank(false)) : out("종합 점수 순위", scoreRank());
+  if (RE.cause.test(t)) return out("지연 원인 ↔ 담당자 연결" + (sites.length ? ` (필터: ${sites.map(s=>s["현장명"]).join(", ")})` : ""), cause(sites));
+  if (RE.safety.test(t)) return out("안전사고 분석", safety());
+  if (proc) return out(`공정 조회: ${proc}`, procDetail(proc));
+  if (sites.length || RE.site.test(t)) {
+    const list = sites.length ? sites : DATA.sites;
+    return out("현장 현황 요약" + (sites.length ? "" : " (전체)"), list.map(s => siteDetail(s, sites.length > 0)).join("\n\n"));
+  }
+  return out("해석 실패", "질문을 이해하지 못했습니다. 이런 질문을 해보세요.\n• 정다은 평가가 실제 공정과 맞아?\n• 한강 오피스 타워 지연 원인은?\n• 가장 위험한 현장은?\n• 성과와 공정이 안 맞는 직원은?\n• 달성률 순위 / 지연 많은 직원 순위\n• 안전사고 현황\n• 기초공사 현황\n• 종합 리포트");
+}
+
+// ================= 점수 순위 · 칭찬/코칭 초안 =================
+const rd = x => Math.round(x);
+const compLine = s => `KPI ${rd(s.comp.kpi)} · 공정 ${rd(s.comp.proc)} · 안전 ${rd(s.comp.safe)} · 추세 ${rd(s.comp.trend)}`;
+const monthly = s => s.ev.map(x => `${x["평가월"].slice(5)}월 ${x["달성률(%)"]}%`).join(" → ");
+
+function praiseDraft(s){
+  const L = [`${s["이름"]}님, 이번 평가에서 종합 ${s.score.toFixed(1)}점으로 ${DATA.employees.length}명 중 ${s.rank}위입니다. 수고 많으셨습니다.`, ""];
+  L.push(`• KPI: 최근 3개월 평균 달성률 ${s.rate.toFixed(1)}% (${monthly(s)})`);
+  if (s.ts.length && s.delay === 0) L.push(`• 공정: 담당 공정 ${s.ts.length}개${s.ts.length > 1 ? " 모두" : ""}를 지연 없이 진행했습니다.`);
+  else if (!s.ts.length) L.push(`• 안전관리: 소속 현장(${siteName(s.site_id)}) 안전사고 ${siteInc(s.site_id)}건`);
+  if (s.incidents === 0) L.push("• 안전: 본인 관련 안전사고 0건 (무재해)");
+  if (s.trend >= 5) L.push(`• 성장: 첫 달 대비 달성률이 ${s.trend.toFixed(1)}%p 상승했습니다.`);
+  L.push(`• 상급자 코멘트: "${s.comment}"`);
+  L.push("", "이 수준을 유지하면서, 팀원들과 노하우를 공유해 주시면 좋겠습니다.");
+  if (s.flag) L.push("", `※ 검토자 확인: '${s.flag}' 표시가 있습니다. 담당 공정 ${s.delay}일 지연이 있으므로 칭찬 전에 사유(${s.ts.filter(t=>t["지연일수"]>0).map(t=>t["지연사유"]).join(", ")})를 확인해 주세요.`);
+  return L.join("\n");
+}
+
+function coachDraft(s){
+  const weak = Object.entries(s.comp).filter(([,v]) => v < 70).sort((a,b) => (100 - b[1]) * W[b[0]] - (100 - a[1]) * W[a[0]]);   // 가중치 반영 감점이 큰 항목부터
+  const L = [`${s["이름"]}님 코칭 포인트 — 종합 ${s.score.toFixed(1)}점 (${s.rank}위/${DATA.employees.length}명)`, ""];
+  L.push("[현황]", `• 항목 점수: ${compLine(s)}`, `• 월별 달성률: ${monthly(s)} (평균 ${s.rate.toFixed(1)}%, ${s.grade}등급)`);
+  L.push("", "[코칭 제안]");
+  const tips = [];
+  weak.forEach(([k]) => {
+    if (k === "kpi") tips.push(`KPI 달성: 평균 달성률 ${s.rate.toFixed(1)}%입니다. 미달 항목을 주 단위 목표로 나누어 점검하고, 막히는 지점을 면담에서 먼저 확인합니다.`);
+    if (k === "proc" && s.ts.length) s.ts.filter(t => t["지연일수"] > 0).forEach(t => tips.push(
+      `공정 준수: ${siteName(t.site_id)} ${t["공정명"]} ${t["지연일수"]}일 지연(${t["지연사유"]}). ` +
+      (kind(t) === "외부요인" ? "외부요인(자재·우천·설계변경·선행공정)이라 개인 역량 문제로 단정하지 말고, 일정 여유나 대체 작업 같은 사전 대비책을 함께 정리합니다."
+                            : "투입 인력·협력업체 일정을 점검하고, 지연 조짐이 보이면 바로 보고하는 체계를 정합니다.")));
+    if (k === "proc" && !s.ts.length) tips.push(`현장 안전: 소속 현장(${siteName(s.site_id)})에서 사고가 ${siteInc(s.site_id)}건 발생했습니다. 사고 다발 구간을 합동 점검하고 재발방지 교육 계획을 세웁니다.`);
+    if (k === "safe") tips.push(`안전: 본인 관련 사고 ${s.incidents}건입니다. 작업 전 안전점검(TBM) 이행 여부와 사고 사례를 함께 복기합니다.`);
+    if (k === "trend") tips.push(`성장 추세: 달성률 변화가 ${s.trend.toFixed(1)}%p입니다. 하락 원인(업무량, 인력, 현장 여건)을 면담에서 확인합니다.`);
+  });
+  if (!tips.length) { const [k] = Object.entries(s.comp).sort((a,b) => a[1] - b[1])[0]; tips.push(`뚜렷한 약점은 없으나 상대적으로 '${COMP_LABEL[k]}'(${rd(s.comp[k])}점) 점수가 낮아 이 부분부터 점검합니다.`); }
+  tips.forEach((t,i) => L.push(`${i+1}. ${t}`));
+  L.push("", "[면담 때 확인할 것]", `• 상급자 코멘트: "${s.comment}"`, "• 목표 달성을 막는 요인이 개인 문제인지, 자재·인력·일정 같은 환경 문제인지");
+  if (!s.ts.length) L.push("• 이 직원은 담당 공정이 없어, 현장 전체 사고가 점수에 반영되었습니다. 책임 범위와 기준이 적절한지도 함께 검토");
+  L.push("", "※ 규칙 기반 초안입니다. 면담 전 담당 상급자가 원본과 대조해 수정하세요. 평가 확정이나 인사 조치의 근거가 아닙니다.");
+  return L.join("\n");
+}
+
+const scoreColor = v => v >= 80 ? "var(--ok)" : v >= 65 ? "var(--warn)" : "var(--bad)";
+$("rank").innerHTML = `<tr><th class="n">순위</th><th>이름</th><th>직책</th><th>현장</th><th>종합 점수</th><th class="n">KPI</th><th class="n">공정</th><th class="n">안전</th><th class="n">추세</th><th class="n">평균 달성률</th><th>최근 등급</th><th class="n">안전사고</th><th class="n">담당 공정</th><th class="n">지연 일수 합</th><th>판정</th><th>구분</th></tr>` +
+  ranked.map(s => `<tr data-emp="${s.emp_id}"><td class="n"><b>${s.rank}</b></td><td class="nm" title="클릭하면 6각형 그래프">${esc(s["이름"])}</td><td>${esc(s["직책"])}</td><td>${esc(siteName(s.site_id))}</td>
+  <td><span class="sc"><i style="width:${s.score}%;background:${scoreColor(s.score)}"></i></span><b>${s.score.toFixed(1)}</b></td>
+  <td class="n">${rd(s.comp.kpi)}</td><td class="n">${rd(s.comp.proc)}</td><td class="n">${rd(s.comp.safe)}</td><td class="n">${rd(s.comp.trend)}</td>
   <td class="n">${s.rate.toFixed(1)}%</td><td><span class="tag" style="background:${gc(s.grade)}">${s.grade}</span></td><td class="n">${s.incidents}</td>
-  <td class="n">${s.nTasks||"-"}</td><td class="n">${s.nTasks?s.delay+"일":"-"}</td>
-  <td>${s.flag?`<span class="tag" style="background:var(--bad)">${s.flag}</span>`:(s.nTasks?"정합":"-")}</td></tr>`).join("");
+  <td class="n">${s.ts.length||"-"}</td><td class="n">${s.ts.length?s.delay+"일":"-"}</td>
+  <td>${s.flag?`<span class="tag" style="background:var(--bad)">${s.flag}</span>`:(s.ts.length?"정합":"-")}</td>
+  <td>${top3.includes(s) ? '<span class="tag" style="background:var(--ok)">칭찬</span>' : bottom3.includes(s) ? '<span class="tag" style="background:var(--warn)">코칭</span>' : ""}</td></tr>`).join("");
 
-// ---- 채팅 ----
-const SYSTEM = `당신은 건설 현장 관리 분석 에이전트입니다. 아래 JSON 데이터(현장, 직원, 공정, 월별 직원 평가)를 근거로 '공사 진행 현황'과 '직원 업무 달성'을 비교 분석합니다.
-규칙: 한국어로 답변. 반드시 데이터의 수치(공정명, 지연일수, 달성률, 등급)를 인용. 데이터에 없는 내용은 추측하지 말고 없다고 말함. 지연 공정과 담당자 성과가 일치하지 않으면 명시. 간결하게, 필요하면 번호 목록 사용. 기준일: ${TODAY}.
-주의: 담당자_id는 공정의 담당 직원(employees.emp_id). 안전관리 직원은 담당 공정이 없음.
-[사전 집계] ${JSON.stringify(stats.map(s=>({emp_id:s.emp_id,이름:s["이름"],평균달성률:+s.rate.toFixed(1),담당공정지연일수합:s.delay,판정:s.flag||"정합/해당없음"})))}
-[원본 데이터] ${JSON.stringify(DATA)}`;
-const history = [];
-$("model").value = localStorage.getItem("hk_model") || "claude-sonnet-5-5";
-$("key").value = localStorage.getItem("hk_key") || "";
+// ---- 6각형(레이더) 그래프: 점수 4항목 + 참고 2항목(상급자 등급, 꾸준함) ----
+const GRADE_PT = {S: 100, A: 80, B: 60, C: 40};
+function axes(s){
+  const v = s.ev.map(x => x["달성률(%)"]), range = v.length ? Math.max(...v) - Math.min(...v) : 0;
+  return [
+    {k: "KPI 달성", v: s.comp.kpi, ref: false},
+    {k: "공정 준수", v: s.comp.proc, ref: false},
+    {k: "안전", v: s.comp.safe, ref: false},
+    {k: "성장 추세", v: s.comp.trend, ref: false},
+    {k: "상급자 등급", v: GRADE_PT[s.grade] ?? 0, ref: true},
+    {k: "꾸준함", v: clamp(100 - range * 4), ref: true},
+  ];
+}
+const AVG_AXES = axes(stats[0]).map((a,i) => avg(stats.map(s => axes(s)[i].v)));
+function drawRadar(s){
+  const A = axes(s), cx = 200, cy = 150, R = 95, N = A.length;
+  const pt = (i, val, r = R) => { const ang = -Math.PI / 2 + i * 2 * Math.PI / N; return [cx + Math.cos(ang) * r * val / 100, cy + Math.sin(ang) * r * val / 100]; };
+  const poly = vals => vals.map((val,i) => pt(i, val).map(n => n.toFixed(1)).join(",")).join(" ");
+  const rings = [25, 50, 75, 100].map(p => `<polygon points="${poly(Array(N).fill(p))}" fill="none" stroke="#d9e0e8" stroke-width="1"/>`).join("");
+  const spokes = A.map((_,i) => { const [x,y] = pt(i, 100); return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#d9e0e8"/>`; }).join("");
+  const labels = A.map((a,i) => { const [x,y] = pt(i, 100, R + 20), anchor = Math.abs(x - cx) < 4 ? "middle" : x > cx ? "start" : "end";
+    return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="${anchor}" font-size="12" fill="#1c2430">${a.k}${a.ref ? "※" : ""}</text>`; }).join("");
+  const dots = A.map((a,i) => { const [x,y] = pt(i, a.v); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="${scoreColor(a.v)}" stroke="#fff"/>`; }).join("");
+  const rows = A.map((a,i) => `<tr><td style="text-align:left">${a.k}${a.ref ? "※" : ""}</td><td class="n"><b>${rd(a.v)}</b></td><td class="n" style="color:var(--mute)">${rd(AVG_AXES[i])}</td></tr>`).join("");
+  $("radar").innerHTML = `<div class="rt">${esc(s["이름"])} <span style="color:var(--mute);font-weight:400">${s.rank}위 · ${s.score.toFixed(1)}점</span></div>
+  <div class="rs">${esc(s["직책"])} · ${esc(siteName(s.site_id))}</div>
+  <svg viewBox="0 0 400 300">${rings}${spokes}
+    <polygon points="${poly(AVG_AXES)}" fill="none" stroke="#8a95a5" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="${poly(A.map(a => a.v))}" fill="rgba(31,78,156,.25)" stroke="var(--brand)" stroke-width="2"/>${dots}${labels}</svg>
+  <div class="lg"><span><i style="background:var(--brand)"></i>${esc(s["이름"])}</span><span><i style="background:#8a95a5"></i>전체 평균</span></div>
+  <table><tr><th style="text-align:left">항목</th><th class="n">점수</th><th class="n">평균</th></tr>${rows}</table>
+  <div class="ref">※ 참고용 축: 종합 점수에는 반영되지 않습니다. 상급자 등급은 최근 등급(S100·A80·B60·C40), 꾸준함은 월별 달성률 변동폭이 작을수록 높습니다(100 − 변동폭×4).${s["직책"] === "안전관리" ? "<br>안전관리 직원의 '공정 준수'는 소속 현장 사고 건수 기준입니다." : ""}</div>`;
+  document.querySelectorAll("#rank tr.sel").forEach(r => r.classList.remove("sel"));
+  const tr = document.querySelector(`#rank tr[data-emp="${s.emp_id}"]`); if (tr) tr.classList.add("sel");
+}
+$("radar").innerHTML = `<div class="ph">직원 이름을 누르면<br>6각형 그래프가 여기에 나옵니다.</div>`;
+$("rank").addEventListener("click", e => { const c = e.target.closest("td.nm"); if (c) drawRadar(sx(c.parentNode.dataset.emp)); });
 
-function add(cls, text){
-  const d = document.createElement("div"); d.className = "m " + cls; d.textContent = text;
+const draftOf = (type, empId) => (type === "praise" ? praiseDraft : coachDraft)(sx(empId));
+const store = {get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+               set: (k,v) => { try { localStorage.setItem(k, v); } catch (e) {} },
+               del: k => { try { localStorage.removeItem(k); } catch (e) {} }};
+function noteCard(s, type){
+  const key = `hk_note_${type}_${s.emp_id}`, id = `note_${type}_${s.emp_id}`, saved = store.get(key);
+  return `<div class="card note-card ${type}"><div class="nh"><b>${s.rank}위 ${esc(s["이름"])}</b><span>${esc(s["직책"])} · ${esc(siteName(s.site_id))} · ${s.score.toFixed(1)}점</span></div>
+  <textarea id="${id}" data-key="${key}" data-type="${type}" data-emp="${s.emp_id}" rows="14">${esc(saved !== null ? saved : draftOf(type, s.emp_id))}</textarea>
+  <div class="nb"><button data-reset="${id}">초안으로 되돌리기</button><span id="${id}_st">${saved !== null ? "수정본 저장됨" : "자동 초안"}</span></div></div>`;
+}
+$("praise").innerHTML = top3.map(s => noteCard(s, "praise")).join("");
+$("coach").innerHTML = bottom3.map(s => noteCard(s, "coach")).join("");
+document.addEventListener("input", e => {
+  const t = e.target.closest("textarea[data-key]"); if (!t) return;
+  store.set(t.dataset.key, t.value); $(t.id + "_st").textContent = "수정본 저장됨";
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-reset]"); if (!b) return;
+  const t = $(b.dataset.reset); store.del(t.dataset.key);
+  t.value = draftOf(t.dataset.type, t.dataset.emp); $(t.id + "_st").textContent = "자동 초안";
+});
+
+// ================= 채팅 UI =================
+function add(cls, text, why){
+  const d = document.createElement("div"); d.className = "m " + cls;
+  if (why) { const w = document.createElement("span"); w.className = "why"; w.textContent = "분석 유형 · " + why; d.appendChild(w); }
+  d.appendChild(document.createTextNode(text));
   $("msgs").appendChild(d); $("msgs").scrollTop = $("msgs").scrollHeight; return d;
 }
-$("local").checked = !!localStorage.getItem("hk_local");
-async function askLocal(text){
-  add("u", text); history.push({role:"user", content:text});
-  $("q").value = ""; $("send").disabled = true;
-  const pending = add("a", "로컬 Claude가 분석 중... (10~30초 걸릴 수 있습니다)");
-  try {
-    const r = await fetch("http://127.0.0.1:8766/chat", {
-      method:"POST", headers:{"content-type":"application/json"},
-      body: JSON.stringify({system:SYSTEM, messages:history})
-    });
-    const j = await r.json();
-    if (!r.ok) throw new Error(j.error || ("HTTP " + r.status));
-    pending.textContent = j.text; history.push({role:"assistant", content:j.text});
-  } catch (e) {
-    const off = /fetch|network/i.test(e.message);
-    pending.className = "m e";
-    pending.textContent = "오류: " + (off ? "로컬 서버에 연결할 수 없습니다. 터미널에서 'py local_server.py'를 실행한 뒤 다시 시도해 주세요." : e.message);
-    history.pop();
-  }
-  $("send").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight;
-}
-function needKey(msg){
-  if (msg) { add("e", msg); }
-  window.scrollTo({top:0, behavior:"smooth"});
-  const k = $("key"); k.style.outline = "3px solid #ffb4b4"; k.focus();
-  k.oninput = () => { k.style.outline = ""; };
-}
-async function ask(text){
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function ask(text, delay = 350){
   text = text.trim(); if (!text) return;
-  const key = $("key").value.trim(), local = $("local").checked;
-  localStorage.setItem("hk_local", local ? "1" : "");
-  if (local) return askLocal(text);
-  if (!key) { needKey("상단 'API 키' 칸에 Anthropic API 키(sk-ant-...)를 입력한 뒤 다시 전송해 주세요."); return; }
-  localStorage.setItem("hk_key", key); localStorage.setItem("hk_model", $("model").value);
-  add("u", text); history.push({role:"user", content:text});
-  $("q").value = ""; $("send").disabled = true;
-  const pending = add("a", "분석 중...");
-  try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method:"POST",
-      headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body: JSON.stringify({model:$("model").value, max_tokens:1500, system:SYSTEM, messages:history})
-    });
-    const j = await r.json();
-    if (!r.ok) throw new Error((j.error && j.error.message) || ("HTTP " + r.status));
-    const out = j.content.filter(b=>b.type==="text").map(b=>b.text).join("\n");
-    pending.textContent = out; history.push({role:"assistant", content:out});
-  } catch (e) {
-    const hint = /api-key|authentication|401/i.test(e.message) ? " → API 키를 확인해 주세요." : /fetch|network/i.test(e.message) ? " → 인터넷 연결 또는 사내망 차단 여부를 확인해 주세요." : "";
-    pending.className = "m e"; pending.textContent = "오류: " + e.message + hint; history.pop();
-    if (hint.includes("키")) needKey();
-  }
-  $("send").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight;
+  add("u", text); $("q").value = ""; await sleep(delay);
+  try { const r = answer(text); add("a", r.body, r.why); }
+  catch (e) { add("a", "분석 중 오류가 발생했습니다: " + e.message); }
 }
 const PRESETS = [
   ["지연 원인 ↔ 담당자", "지연된 공정의 지연사유와 담당자의 성과(달성률, 등급)를 연결해서 분석해줘."],
-  ["성과-공정 불일치", "직원 평가 결과와 실제 담당 공정 진행이 맞지 않는 직원이 누구인지, 근거와 함께 알려줘."],
-  ["리스크 현장", "준공예정일까지 가장 위험한 현장은 어디이고 그 이유와 조치 방안은?"],
-  ["현장별 요약", "현장별로 공사 진행 현황과 담당 직원 성과를 3줄씩 요약해줘."],
+  ["성과-공정 불일치", "직원 평가 결과와 실제 담당 공정 진행이 맞지 않는 직원이 누구인지 알려줘."],
+  ["리스크 현장", "준공예정일까지 가장 위험한 현장은 어디이고 조치 방안은?"],
+  ["안전사고", "안전사고 현황 알려줘."],
+  ["점수 순위", "직원 종합 점수 순위 알려줘."],
+  ["칭찬 문구", "상위 직원 칭찬 문구 작성해줘."],
+  ["코칭 조언", "하위 직원 코칭 조언 작성해줘."],
 ];
-// ---- 예시 대화 (AI 호출 없이 실제 데이터로 계산한 데모) ----
-const empName = id => (DATA.employees.find(e => e.emp_id === id) || {})["이름"];
-const sx = id => stats.find(s => s.emp_id === id);
-function demoTurns(){
-  const late = DATA.tasks.filter(t => t["지연일수"] > 0).sort((a,b) => b["지연일수"] - a["지연일수"]);
-  const a1 = "지연된 공정 " + late.length + "개를 지연일수 순으로 담당자 성과와 연결했습니다.\n" +
-    late.slice(0,5).map((t,i) => { const s = sx(t["담당자_id"]);
-      return `${i+1}. ${siteName(t.site_id)} ${t["공정명"]} — ${t["지연일수"]}일 지연 (${t["지연사유"]})\n    담당 ${s["이름"]}(${s["직책"]}): 평균 달성률 ${s.rate.toFixed(1)}%, 최근 등급 ${s.grade}`; }).join("\n") +
-    `\n\n지연 ${late.length}건 중 ${late.filter(t => sx(t["담당자_id"]).rate < 90).length}건은 평균 달성률 90% 미만 담당자, ${late.filter(t => sx(t["담당자_id"]).rate >= 95).length}건은 95% 이상 담당자의 공정입니다. 후자는 '${late.find(t => sx(t["담당자_id"]).rate >= 95)?.["지연사유"] ?? "-"}'처럼 개인 역량 밖의 사유일 수 있어 구분해서 봐야 합니다.`;
-  const fl = stats.filter(s => s.flag);
-  const a2 = fl.length ? "평가와 실제 공정이 어긋나는 직원입니다.\n" + fl.map(s => {
-      const ts = DATA.tasks.filter(t => t["담당자_id"] === s.emp_id && t["지연일수"] > 0);
-      return `• ${s["이름"]}(${siteName(s.site_id)}) — ${s.flag}: 평균 달성률 ${s.rate.toFixed(1)}%(${s.grade}등급), 그러나 담당 공정 지연 ${s.delay}일` + (ts.length ? `\n   (${ts.map(t=>t["공정명"]+" "+t["지연일수"]+"일, "+t["지연사유"]).join(" / ")})` : ""); }).join("\n") +
-    "\n\n개인 KPI는 높아도 담당 공정 일정이 지연됐다면 KPI 항목에 '공정 준수'가 충분히 반영되지 않았을 수 있습니다." : "불일치 직원이 없습니다.";
-  const worst = [...DATA.sites].sort((a,b) => a["차이(%p)"] - b["차이(%p)"])[0];
-  const wl = DATA.tasks.filter(t => t.site_id === worst.site_id && t["지연일수"] > 0);
-  const a3 = `가장 위험한 현장은 '${worst["현장명"]}'입니다.\n• 계획 ${worst["계획공정률(%)"]}% vs 실제 ${worst["실제공정률(%)"]}% (${worst["차이(%p)"]}%p), 준공예정 ${worst["준공예정일"]}\n• 지연 공정 ${wl.length}개: ` +
-    wl.map(t => `${t["공정명"]}(${empName(t["담당자_id"])}, ${t["지연일수"]}일)`).join(", ") +
-    `\n\n권장 조치\n1. 지연 공정 담당자와 주간 일정 점검 회의\n2. 후속 공정(${DATA.tasks.filter(t=>t.site_id===worst.site_id&&t["상태"]==="예정").slice(0,2).map(t=>t["공정명"]).join(", ")}) 일정 재산정\n3. 달성률이 낮은 직원에게 선행 공정 관리 지원 인력 배치`;
-  return [[PRESETS[0][1], a1], [PRESETS[1][1], a2], [PRESETS[2][1], a3]];
-}
 let demoRunning = false;
 async function playDemo(){
   if (demoRunning) return; demoRunning = true;
-  add("a", "아래는 AI 호출 없이 현재 데이터로 자동 생성한 예시 대화입니다. 실제 AI 답변은 더 자세하고 자연스럽습니다.");
-  for (const [q, a] of demoTurns()) {
-    await new Promise(r => setTimeout(r, 500)); add("u", q);
-    const m = add("a", "분석 중..."); await new Promise(r => setTimeout(r, 900)); m.textContent = a;
-    $("msgs").scrollTop = $("msgs").scrollHeight;
-  }
+  add("a", "예시 대화입니다. 실제로 같은 질문을 입력하면 같은 답을 얻습니다.");
+  for (const q of [PRESETS[0][1], "정다은 평가가 실제 공정과 맞아?", "한강 오피스 타워 현황", PRESETS[2][1]]) { await sleep(500); await ask(q, 700); }
   demoRunning = false;
 }
 $("chips").innerHTML = PRESETS.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join("") +
-  `<button class="rep" data-r="1">자동 분석 리포트</button><button data-d="1" style="border-style:dashed">예시 대화 보기</button>`;
+  `<button class="rep" data-r="1">종합 리포트</button><button data-d="1" style="border-style:dashed">예시 대화 보기</button>`;
 $("chips").onclick = e => {
   const b = e.target.closest("button"); if (!b) return;
-  if (b.dataset.d) return playDemo();
-  if (b.dataset.r) ask("전체 현황 리포트를 작성해줘. 구성: 1) 한 줄 총평 2) 현장별 진행 현황과 위험도 3) 직원 성과와 공정 정합성 이슈(이름 명시) 4) 우선 조치 3가지.");
+  if (b.dataset.d) playDemo();
+  else if (b.dataset.r) ask("종합 리포트 작성해줘");
   else ask(PRESETS[b.dataset.i][1]);
 };
 $("send").onclick = () => ask($("q").value);
 $("q").onkeydown = e => { if (e.key === "Enter" && !e.isComposing) ask($("q").value); };
-add("a", "안녕하세요. 현장 3곳, 직원 10명의 더미데이터를 기반으로 공사 진행과 직원 성과를 비교해 드립니다. 상단에 API 키를 입력하고 아래 버튼이나 질문으로 시작하세요.");
+add("a", "안녕하세요. 현장 3곳, 직원 10명의 데이터를 규칙 기반으로 분석해 공사 진행과 직원 성과를 비교해 드립니다.\n직원 이름, 현장 이름, 공정 이름, '지연 원인', '위험', '불일치', '순위', '안전사고' 같은 키워드로 질문해 보세요.");
 </script>
 </body>
 </html>
