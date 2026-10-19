@@ -6,6 +6,16 @@
 
 각 폴더의 `index.html`이 해당 주소의 페이지가 됩니다.
 
+## 기본 세팅 (GitHub Pages)
+
+처음 한 번만 설정하면 됩니다.
+
+1. 저장소의 **Settings** 탭으로 이동합니다.
+2. 왼쪽 메뉴에서 **Pages**를 선택합니다.
+3. **Build and deployment**의 Source를 `Deploy from a branch`로 두고, Branch를 `main` / `/ (root)`로 선택한 뒤 **Save**를 누릅니다.
+
+![GitHub Pages 기본 세팅](images/github-pages-setting.png)
+
 ## `/deploy-pages` 스킬 사용법
 
 Claude Code에서 `/deploy-pages`를 실행하면 업로드부터 배포 확인까지 자동으로 진행합니다. "깃허브 페이지로 배포", "html 올려줘"라고 말해도 동작합니다.
