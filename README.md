@@ -36,6 +36,16 @@ Claude Code에서 `/deploy-pages`를 실행하면 업로드부터 배포 확인�
 
 ![패들릿 게시물 메뉴에서 링크 복사하기](images/padlet-link-menu.png)
 
+### 호출하는 방법
+
+입력창에 `/deploy-pages` 뒤에 **게시물 링크**와 **첨부파일 링크**를 공백으로 구분해 이어서 붙여넣고 보내면 됩니다.
+
+```
+/deploy-pages <게시물 링크> <첨부파일 링크>
+```
+
+![/deploy-pages 호출 예시](images/deploy-pages-usage.png)
+
 ### 진행 순서
 
 1. **사전 점검**: git, gh 설치, 작성자 정보, GitHub 로그인 상태를 확인합니다.
