@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>공사 진행 · 직원 성과 비교 에이전트</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1c2430;--mute:#6b7685;--line:#e3e8ee;--brand:#1f4e9c;--plan:#b8c4d6;--ok:#1a8f5a;--warn:#d98b00;--bad:#c93a3a}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+header{background:var(--brand);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{margin:0;font-size:18px}
+header small{opacity:.8}
+.keybar{display:flex;gap:8px;align-items:center;font-size:12px}
+.keybar input{padding:6px 8px;border:0;border-radius:4px;font-size:12px}
+main{max-width:1280px;margin:0 auto;padding:20px;display:grid;gap:20px}
+main>*{min-width:0}
+h2{font-size:15px;margin:0 0 10px}
+.sites{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px}
+.card .name{font-weight:700;font-size:15px}
+.card .meta{color:var(--mute);font-size:12px;margin-bottom:12px}
+.bar{height:10px;background:#eef1f5;border-radius:5px;margin:4px 0 10px;overflow:hidden}
+.bar>i{display:block;height:100%}
+.lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
+.lbl b{color:var(--ink)}
+.diff{font-weight:700}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;color:#fff}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line)}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);font-size:13px}
+th{background:#eef1f5;font-size:12px;color:var(--mute)}
+#emps{display:block;overflow-x:auto;white-space:nowrap}
+td.n,th.n{text-align:right}
+tr:last-child td{border-bottom:0}
+.chat{display:flex;flex-direction:column;height:520px}
+.msgs{flex:1;overflow:auto;padding:4px 2px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:85%;padding:10px 14px;border-radius:10px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.m.u{align-self:flex-end;background:var(--brand);color:#fff}
+.m.a{align-self:flex-start;background:#eef1f5}
+.m.e{align-self:flex-start;background:#fdecec;color:var(--bad)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chips button{background:#fff;border:1px solid var(--brand);color:var(--brand);padding:6px 12px;border-radius:16px;cursor:pointer;font-size:12px}
+.chips button.rep{background:var(--brand);color:#fff}
+.chips button:hover{opacity:.85}
+.in{display:flex;gap:8px}
+.in input{flex:1;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:14px}
+.in button{padding:0 20px;background:var(--brand);color:#fff;border:0;border-radius:6px;cursor:pointer}
+.in button:disabled{opacity:.5}
+.note{color:var(--mute);font-size:12px;margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>공사 진행 · 직원 성과 비교 에이전트</h1><small>기준일 <span id="today"></span> · 더미데이터</small></div>
+  <div class="keybar">
+    <label title="local_server.py 실행 필요 (API 키 불필요)"><input type="checkbox" id="local"> 로컬 Claude 사용</label>
+    <label>API 키 <input id="key" type="password" placeholder="sk-ant-..." size="22"></label>
+    <label>모델 <input id="model" size="16"></label>
+  </div>
+</header>
+<main>
+  <section><h2>현장별 공사 진행 현황</h2><div class="sites" id="sites"></div></section>
+  <section><h2>직원별 업무 달성 vs 담당 공정</h2><table id="emps"></table>
+    <div class="note">불일치: 달성률 95% 이상인데 담당 공정이 20일 이상 지연(평가 과대 의심), 또는 달성률 85% 미만인데 담당 공정이 지연 없음(평가 과소 의심). 안전관리 직원은 담당 공정이 없어 제외.</div></section>
+  <section class="card chat"><h2>AI 분석 채팅</h2>
+    <div class="msgs" id="msgs"></div>
+    <div class="chips" id="chips"></div>
+    <div class="in"><input id="q" placeholder="예: 한강 오피스 타워 지연의 원인과 담당자 성과는?"><button id="send">전송</button></div>
+  </section>
+</main>
+<script>
+const DATA = {"sites": [{"site_id": "S01", "현장명": "해오름 아파트 신축", "유형": "주거", "착공일": "2026-03-02", "준공예정일": "2027-02-26", "계획공정률(%)": 64.0, "실제공정률(%)": 64.1, "차이(%p)": 0.1}, {"site_id": "S02", "현장명": "한강 오피스 타워", "유형": "업무", "착공일": "2026-04-01", "준공예정일": "2027-05-31", "계획공정률(%)": 47.3, "실제공정률(%)": 43.1, "차이(%p)": -4.2}, {"site_id": "S03", "현장명": "남부 물류센터", "유형": "물류", "착공일": "2026-05-11", "준공예정일": "2027-01-29", "계획공정률(%)": 61.2, "실제공정률(%)": 61.2, "차이(%p)": 0.0}], "employees": [{"emp_id": "E01", "이름": "김민수", "직책": "공사부장", "site_id": "S01"}, {"emp_id": "E02", "이름": "이서연", "직책": "공정관리", "site_id": "S01"}, {"emp_id": "E03", "이름": "박준호", "직책": "안전관리", "site_id": "S01"}, {"emp_id": "E04", "이름": "최지우", "직책": "품질관리", "site_id": "S01"}, {"emp_id": "E05", "이름": "정다은", "직책": "공사부장", "site_id": "S02"}, {"emp_id": "E06", "이름": "한상훈", "직책": "공정관리", "site_id": "S02"}, {"emp_id": "E07", "이름": "오지현", "직책": "안전관리", "site_id": "S02"}, {"emp_id": "E08", "이름": "윤태영", "직책": "공사부장", "site_id": "S03"}, {"emp_id": "E09", "이름": "강하늘", "직책": "공정관리", "site_id": "S03"}, {"emp_id": "E10", "이름": "송미래", "직책": "품질관리", "site_id": "S03"}], "tasks": [{"task_id": "T001", "site_id": "S01", "공정명": "가설공사", "담당자_id": "E04", "계획시작": "2026-03-02", "계획종료": "2026-04-16", "실제시작": "2026-03-04", "실제종료": "2026-04-16", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T002", "site_id": "S01", "공정명": "토공사", "담당자_id": "E01", "계획시작": "2026-04-16", "계획종료": "2026-05-31", "실제시작": "2026-04-16", "실제종료": "2026-05-31", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T003", "site_id": "S01", "공정명": "기초공사", "담당자_id": "E04", "계획시작": "2026-05-31", "계획종료": "2026-07-15", "실제시작": "2026-06-09", "실제종료": "2026-08-23", "진행률(%)": 100, "상태": "완료", "지연일수": 39, "지연사유": "선행 공정 지연"}, {"task_id": "T004", "site_id": "S01", "공정명": "골조공사", "담당자_id": "E02", "계획시작": "2026-07-15", "계획종료": "2026-08-29", "실제시작": "2026-07-15", "실제종료": "2026-08-29", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T005", "site_id": "S01", "공정명": "방수공사", "담당자_id": "E01", "계획시작": "2026-08-29", "계획종료": "2026-10-13", "실제시작": "2026-08-29", "실제종료": "2026-10-13", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T006", "site_id": "S01", "공정명": "설비공사", "담당자_id": "E04", "계획시작": "2026-10-13", "계획종료": "2026-11-27", "실제시작": "2026-10-16", "실제종료": "", "진행률(%)": 13, "상태": "진행중", "지연일수": 0, "지연사유": ""}, {"task_id": "T007", "site_id": "S01", "공정명": "전기공사", "담당자_id": "E01", "계획시작": "2026-11-27", "계획종료": "2027-01-11", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}, {"task_id": "T008", "site_id": "S01", "공정명": "외부마감", "담당자_id": "E01", "계획시작": "2027-01-11", "계획종료": "2027-02-26", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}, {"task_id": "T009", "site_id": "S02", "공정명": "가설공사", "담당자_id": "E06", "계획시작": "2026-04-01", "계획종료": "2026-05-24", "실제시작": "2026-04-02", "실제종료": "2026-05-24", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T010", "site_id": "S02", "공정명": "토공사", "담당자_id": "E05", "계획시작": "2026-05-24", "계획종료": "2026-07-16", "실제시작": "2026-05-30", "실제종료": "2026-08-11", "진행률(%)": 100, "상태": "완료", "지연일수": 26, "지연사유": "자재 수급 지연"}, {"task_id": "T011", "site_id": "S02", "공정명": "기초공사", "담당자_id": "E06", "계획시작": "2026-07-16", "계획종료": "2026-09-07", "실제시작": "2026-07-18", "실제종료": "2026-09-07", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T012", "site_id": "S02", "공정명": "골조공사", "담당자_id": "E06", "계획시작": "2026-09-07", "계획종료": "2026-10-30", "실제시작": "2026-09-15", "실제종료": "", "진행률(%)": 45, "상태": "지연", "지연일수": 34, "지연사유": "우천으로 인한 작업 중단"}, {"task_id": "T013", "site_id": "S02", "공정명": "방수공사", "담당자_id": "E05", "계획시작": "2026-10-30", "계획종료": "2026-12-22", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}, {"task_id": "T014", "site_id": "S02", "공정명": "설비공사", "담당자_id": "E05", "계획시작": "2026-12-22", "계획종료": "2027-02-13", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}, {"task_id": "T015", "site_id": "S02", "공정명": "전기공사", "담당자_id": "E05", "계획시작": "2027-02-13", "계획종료": "2027-04-07", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}, {"task_id": "T016", "site_id": "S02", "공정명": "외부마감", "담당자_id": "E05", "계획시작": "2027-04-07", "계획종료": "2027-05-31", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}, {"task_id": "T017", "site_id": "S03", "공정명": "가설공사", "담당자_id": "E10", "계획시작": "2026-05-11", "계획종료": "2026-06-12", "실제시작": "2026-05-12", "실제종료": "2026-06-12", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T018", "site_id": "S03", "공정명": "토공사", "담당자_id": "E09", "계획시작": "2026-06-12", "계획종료": "2026-07-15", "실제시작": "2026-06-14", "실제종료": "2026-07-15", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T019", "site_id": "S03", "공정명": "기초공사", "담당자_id": "E10", "계획시작": "2026-07-15", "계획종료": "2026-08-17", "실제시작": "2026-07-18", "실제종료": "2026-08-26", "진행률(%)": 100, "상태": "완료", "지연일수": 9, "지연사유": "선행 공정 지연"}, {"task_id": "T020", "site_id": "S03", "공정명": "골조공사", "담당자_id": "E10", "계획시작": "2026-08-17", "계획종료": "2026-09-19", "실제시작": "2026-08-20", "실제종료": "2026-09-19", "진행률(%)": 100, "상태": "완료", "지연일수": 0, "지연사유": ""}, {"task_id": "T021", "site_id": "S03", "공정명": "방수공사", "담당자_id": "E09", "계획시작": "2026-09-19", "계획종료": "2026-10-22", "실제시작": "2026-09-20", "실제종료": "", "진행률(%)": 90, "상태": "진행중", "지연일수": 0, "지연사유": ""}, {"task_id": "T022", "site_id": "S03", "공정명": "설비공사", "담당자_id": "E10", "계획시작": "2026-10-22", "계획종료": "2026-11-24", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}, {"task_id": "T023", "site_id": "S03", "공정명": "전기공사", "담당자_id": "E08", "계획시작": "2026-11-24", "계획종료": "2026-12-27", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}, {"task_id": "T024", "site_id": "S03", "공정명": "외부마감", "담당자_id": "E09", "계획시작": "2026-12-27", "계획종료": "2027-01-29", "실제시작": "", "실제종료": "", "진행률(%)": 0, "상태": "예정", "지연일수": 0, "지연사유": ""}], "evaluations": [{"emp_id": "E01", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 110.9, "달성률(%)": 110.9, "안전사고건수": 0, "등급": "S", "상급자코멘트": "목표 초과 달성, 팀 내 모범."}, {"emp_id": "E01", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 115.2, "달성률(%)": 115.2, "안전사고건수": 0, "등급": "S", "상급자코멘트": "공정 선행 관리가 우수하며 협력업체 조율이 뛰어남."}, {"emp_id": "E01", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 109.6, "달성률(%)": 109.6, "안전사고건수": 0, "등급": "S", "상급자코멘트": "목표 초과 달성, 팀 내 모범."}, {"emp_id": "E02", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 110.4, "달성률(%)": 110.4, "안전사고건수": 0, "등급": "S", "상급자코멘트": "목표 초과 달성, 팀 내 모범."}, {"emp_id": "E02", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 92.9, "달성률(%)": 92.9, "안전사고건수": 0, "등급": "B", "상급자코멘트": "보고 및 이슈 공유 속도 개선 필요."}, {"emp_id": "E02", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 117.1, "달성률(%)": 117.1, "안전사고건수": 0, "등급": "S", "상급자코멘트": "공정 선행 관리가 우수하며 협력업체 조율이 뛰어남."}, {"emp_id": "E03", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 94.9, "달성률(%)": 94.9, "안전사고건수": 0, "등급": "B", "상급자코멘트": "보고 및 이슈 공유 속도 개선 필요."}, {"emp_id": "E03", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 90.8, "달성률(%)": 90.8, "안전사고건수": 0, "등급": "B", "상급자코멘트": "보고 및 이슈 공유 속도 개선 필요."}, {"emp_id": "E03", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 80.7, "달성률(%)": 80.7, "안전사고건수": 0, "등급": "C", "상급자코멘트": "반복적인 일정 지연 발생, 원인 분석 및 개선 계획 필요."}, {"emp_id": "E04", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 96.0, "달성률(%)": 96.0, "안전사고건수": 1, "등급": "A", "상급자코멘트": "일정 준수율이 양호함."}, {"emp_id": "E04", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 85.3, "달성률(%)": 85.3, "안전사고건수": 0, "등급": "B", "상급자코멘트": "일부 공정에서 일정 관리 보완 필요."}, {"emp_id": "E04", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 80.2, "달성률(%)": 80.2, "안전사고건수": 0, "등급": "C", "상급자코멘트": "목표 미달, 현장 점검 및 관리 강화 필요."}, {"emp_id": "E05", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 109.6, "달성률(%)": 109.6, "안전사고건수": 0, "등급": "S", "상급자코멘트": "공정 선행 관리가 우수하며 협력업체 조율이 뛰어남."}, {"emp_id": "E05", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 99.8, "달성률(%)": 99.8, "안전사고건수": 2, "등급": "A", "상급자코멘트": "계획 대비 안정적으로 업무 수행."}, {"emp_id": "E05", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 106.1, "달성률(%)": 106.1, "안전사고건수": 0, "등급": "S", "상급자코멘트": "공정 선행 관리가 우수하며 협력업체 조율이 뛰어남."}, {"emp_id": "E06", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 86.2, "달성률(%)": 86.2, "안전사고건수": 2, "등급": "B", "상급자코멘트": "일부 공정에서 일정 관리 보완 필요."}, {"emp_id": "E06", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 82.9, "달성률(%)": 82.9, "안전사고건수": 2, "등급": "C", "상급자코멘트": "반복적인 일정 지연 발생, 원인 분석 및 개선 계획 필요."}, {"emp_id": "E06", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 82.3, "달성률(%)": 82.3, "안전사고건수": 0, "등급": "C", "상급자코멘트": "반복적인 일정 지연 발생, 원인 분석 및 개선 계획 필요."}, {"emp_id": "E07", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 111.7, "달성률(%)": 111.7, "안전사고건수": 0, "등급": "S", "상급자코멘트": "공정 선행 관리가 우수하며 협력업체 조율이 뛰어남."}, {"emp_id": "E07", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 109.7, "달성률(%)": 109.7, "안전사고건수": 0, "등급": "S", "상급자코멘트": "목표 초과 달성, 팀 내 모범."}, {"emp_id": "E07", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 109.6, "달성률(%)": 109.6, "안전사고건수": 0, "등급": "S", "상급자코멘트": "목표 초과 달성, 팀 내 모범."}, {"emp_id": "E08", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 97.5, "달성률(%)": 97.5, "안전사고건수": 3, "등급": "A", "상급자코멘트": "계획 대비 안정적으로 업무 수행."}, {"emp_id": "E08", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 97.3, "달성률(%)": 97.3, "안전사고건수": 0, "등급": "A", "상급자코멘트": "일정 준수율이 양호함."}, {"emp_id": "E08", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 93.6, "달성률(%)": 93.6, "안전사고건수": 0, "등급": "B", "상급자코멘트": "보고 및 이슈 공유 속도 개선 필요."}, {"emp_id": "E09", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 92.8, "달성률(%)": 92.8, "안전사고건수": 0, "등급": "B", "상급자코멘트": "일부 공정에서 일정 관리 보완 필요."}, {"emp_id": "E09", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 92.7, "달성률(%)": 92.7, "안전사고건수": 0, "등급": "B", "상급자코멘트": "일부 공정에서 일정 관리 보완 필요."}, {"emp_id": "E09", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 96.6, "달성률(%)": 96.6, "안전사고건수": 0, "등급": "A", "상급자코멘트": "계획 대비 안정적으로 업무 수행."}, {"emp_id": "E10", "평가월": "2026-08", "KPI목표": 100, "KPI실적": 112.5, "달성률(%)": 112.5, "안전사고건수": 0, "등급": "S", "상급자코멘트": "공정 선행 관리가 우수하며 협력업체 조율이 뛰어남."}, {"emp_id": "E10", "평가월": "2026-09", "KPI목표": 100, "KPI실적": 105.5, "달성률(%)": 105.5, "안전사고건수": 0, "등급": "S", "상급자코멘트": "공정 선행 관리가 우수하며 협력업체 조율이 뛰어남."}, {"emp_id": "E10", "평가월": "2026-10", "KPI목표": 100, "KPI실적": 109.1, "달성률(%)": 109.1, "안전사고건수": 0, "등급": "S", "상급자코멘트": "목표 초과 달성, 팀 내 모범."}]};
+const TODAY = "2026-10-19";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+$("today").textContent = TODAY;
+
+// ---- 집계 ----
+const stats = DATA.employees.map(e => {
+  const ev = DATA.evaluations.filter(x => x.emp_id === e.emp_id);
+  const ts = DATA.tasks.filter(t => t["담당자_id"] === e.emp_id);
+  const rate = avg(ev.map(x => x["달성률(%)"]));
+  const delay = ts.reduce((s,t) => s + t["지연일수"], 0);
+  const latest = ev[ev.length-1] || {};
+  let flag = "";
+  if (ts.length) {
+    if (rate >= 95 && delay >= 20) flag = "평가 과대 의심";
+    else if (rate < 85 && delay === 0) flag = "평가 과소 의심";
+  }
+  return {...e, rate, delay, nTasks: ts.length, grade: latest["등급"], incidents: ev.reduce((s,x)=>s+x["안전사고건수"],0), flag};
+});
+const siteName = id => DATA.sites.find(s => s.site_id === id)["현장명"];
+
+// ---- 대시보드 ----
+$("sites").innerHTML = DATA.sites.map(s => {
+  const d = s["차이(%p)"], col = d <= -3 ? "var(--bad)" : d < 0 ? "var(--warn)" : "var(--ok)";
+  const late = DATA.tasks.filter(t => t.site_id === s.site_id && t["지연일수"] > 0).length;
+  return `<div class="card"><div class="name">${esc(s["현장명"])}</div>
+  <div class="meta">${esc(s["유형"])} · ${s["착공일"]} ~ ${s["준공예정일"]}</div>
+  <div class="lbl"><span>계획 공정률</span><b>${s["계획공정률(%)"]}%</b></div><div class="bar"><i style="width:${s["계획공정률(%)"]}%;background:var(--plan)"></i></div>
+  <div class="lbl"><span>실제 공정률</span><b>${s["실제공정률(%)"]}%</b></div><div class="bar"><i style="width:${s["실제공정률(%)"]}%;background:${col}"></i></div>
+  <div class="lbl"><span>차이 <span class="diff" style="color:${col}">${d>0?"+":""}${d}%p</span></span><span>지연 경험 공정 <b>${late}</b>개</span></div></div>`;
+}).join("");
+
+const gc = g => ({S:"var(--ok)",A:"#2f7fd0",B:"var(--warn)",C:"var(--bad)"}[g]||"#999");
+$("emps").innerHTML = `<tr><th>이름</th><th>직책</th><th>현장</th><th class="n">평균 달성률</th><th>최근 등급</th><th class="n">안전사고</th><th class="n">담당 공정</th><th class="n">지연 일수 합</th><th>판정</th></tr>` +
+  stats.map(s => `<tr><td>${esc(s["이름"])}</td><td>${esc(s["직책"])}</td><td>${esc(siteName(s.site_id))}</td>
+  <td class="n">${s.rate.toFixed(1)}%</td><td><span class="tag" style="background:${gc(s.grade)}">${s.grade}</span></td><td class="n">${s.incidents}</td>
+  <td class="n">${s.nTasks||"-"}</td><td class="n">${s.nTasks?s.delay+"일":"-"}</td>
+  <td>${s.flag?`<span class="tag" style="background:var(--bad)">${s.flag}</span>`:(s.nTasks?"정합":"-")}</td></tr>`).join("");
+
+// ---- 채팅 ----
+const SYSTEM = `당신은 건설 현장 관리 분석 에이전트입니다. 아래 JSON 데이터(현장, 직원, 공정, 월별 직원 평가)를 근거로 '공사 진행 현황'과 '직원 업무 달성'을 비교 분석합니다.
+규칙: 한국어로 답변. 반드시 데이터의 수치(공정명, 지연일수, 달성률, 등급)를 인용. 데이터에 없는 내용은 추측하지 말고 없다고 말함. 지연 공정과 담당자 성과가 일치하지 않으면 명시. 간결하게, 필요하면 번호 목록 사용. 기준일: ${TODAY}.
+주의: 담당자_id는 공정의 담당 직원(employees.emp_id). 안전관리 직원은 담당 공정이 없음.
+[사전 집계] ${JSON.stringify(stats.map(s=>({emp_id:s.emp_id,이름:s["이름"],평균달성률:+s.rate.toFixed(1),담당공정지연일수합:s.delay,판정:s.flag||"정합/해당없음"})))}
+[원본 데이터] ${JSON.stringify(DATA)}`;
+const history = [];
+$("model").value = localStorage.getItem("hk_model") || "claude-sonnet-5-5";
+$("key").value = localStorage.getItem("hk_key") || "";
+
+function add(cls, text){
+  const d = document.createElement("div"); d.className = "m " + cls; d.textContent = text;
+  $("msgs").appendChild(d); $("msgs").scrollTop = $("msgs").scrollHeight; return d;
+}
+$("local").checked = !!localStorage.getItem("hk_local");
+async function askLocal(text){
+  add("u", text); history.push({role:"user", content:text});
+  $("q").value = ""; $("send").disabled = true;
+  const pending = add("a", "로컬 Claude가 분석 중... (10~30초 걸릴 수 있습니다)");
+  try {
+    const r = await fetch("http://127.0.0.1:8766/chat", {
+      method:"POST", headers:{"content-type":"application/json"},
+      body: JSON.stringify({system:SYSTEM, messages:history})
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || ("HTTP " + r.status));
+    pending.textContent = j.text; history.push({role:"assistant", content:j.text});
+  } catch (e) {
+    const off = /fetch|network/i.test(e.message);
+    pending.className = "m e";
+    pending.textContent = "오류: " + (off ? "로컬 서버에 연결할 수 없습니다. 터미널에서 'py local_server.py'를 실행한 뒤 다시 시도해 주세요." : e.message);
+    history.pop();
+  }
+  $("send").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight;
+}
+function needKey(msg){
+  if (msg) { add("e", msg); }
+  window.scrollTo({top:0, behavior:"smooth"});
+  const k = $("key"); k.style.outline = "3px solid #ffb4b4"; k.focus();
+  k.oninput = () => { k.style.outline = ""; };
+}
+async function ask(text){
+  text = text.trim(); if (!text) return;
+  const key = $("key").value.trim(), local = $("local").checked;
+  localStorage.setItem("hk_local", local ? "1" : "");
+  if (local) return askLocal(text);
+  if (!key) { needKey("상단 'API 키' 칸에 Anthropic API 키(sk-ant-...)를 입력한 뒤 다시 전송해 주세요."); return; }
+  localStorage.setItem("hk_key", key); localStorage.setItem("hk_model", $("model").value);
+  add("u", text); history.push({role:"user", content:text});
+  $("q").value = ""; $("send").disabled = true;
+  const pending = add("a", "분석 중...");
+  try {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body: JSON.stringify({model:$("model").value, max_tokens:1500, system:SYSTEM, messages:history})
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error((j.error && j.error.message) || ("HTTP " + r.status));
+    const out = j.content.filter(b=>b.type==="text").map(b=>b.text).join("\n");
+    pending.textContent = out; history.push({role:"assistant", content:out});
+  } catch (e) {
+    const hint = /api-key|authentication|401/i.test(e.message) ? " → API 키를 확인해 주세요." : /fetch|network/i.test(e.message) ? " → 인터넷 연결 또는 사내망 차단 여부를 확인해 주세요." : "";
+    pending.className = "m e"; pending.textContent = "오류: " + e.message + hint; history.pop();
+    if (hint.includes("키")) needKey();
+  }
+  $("send").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight;
+}
+const PRESETS = [
+  ["지연 원인 ↔ 담당자", "지연된 공정의 지연사유와 담당자의 성과(달성률, 등급)를 연결해서 분석해줘."],
+  ["성과-공정 불일치", "직원 평가 결과와 실제 담당 공정 진행이 맞지 않는 직원이 누구인지, 근거와 함께 알려줘."],
+  ["리스크 현장", "준공예정일까지 가장 위험한 현장은 어디이고 그 이유와 조치 방안은?"],
+  ["현장별 요약", "현장별로 공사 진행 현황과 담당 직원 성과를 3줄씩 요약해줘."],
+];
+// ---- 예시 대화 (AI 호출 없이 실제 데이터로 계산한 데모) ----
+const empName = id => (DATA.employees.find(e => e.emp_id === id) || {})["이름"];
+const sx = id => stats.find(s => s.emp_id === id);
+function demoTurns(){
+  const late = DATA.tasks.filter(t => t["지연일수"] > 0).sort((a,b) => b["지연일수"] - a["지연일수"]);
+  const a1 = "지연된 공정 " + late.length + "개를 지연일수 순으로 담당자 성과와 연결했습니다.\n" +
+    late.slice(0,5).map((t,i) => { const s = sx(t["담당자_id"]);
+      return `${i+1}. ${siteName(t.site_id)} ${t["공정명"]} — ${t["지연일수"]}일 지연 (${t["지연사유"]})\n    담당 ${s["이름"]}(${s["직책"]}): 평균 달성률 ${s.rate.toFixed(1)}%, 최근 등급 ${s.grade}`; }).join("\n") +
+    `\n\n지연 ${late.length}건 중 ${late.filter(t => sx(t["담당자_id"]).rate < 90).length}건은 평균 달성률 90% 미만 담당자, ${late.filter(t => sx(t["담당자_id"]).rate >= 95).length}건은 95% 이상 담당자의 공정입니다. 후자는 '${late.find(t => sx(t["담당자_id"]).rate >= 95)?.["지연사유"] ?? "-"}'처럼 개인 역량 밖의 사유일 수 있어 구분해서 봐야 합니다.`;
+  const fl = stats.filter(s => s.flag);
+  const a2 = fl.length ? "평가와 실제 공정이 어긋나는 직원입니다.\n" + fl.map(s => {
+      const ts = DATA.tasks.filter(t => t["담당자_id"] === s.emp_id && t["지연일수"] > 0);
+      return `• ${s["이름"]}(${siteName(s.site_id)}) — ${s.flag}: 평균 달성률 ${s.rate.toFixed(1)}%(${s.grade}등급), 그러나 담당 공정 지연 ${s.delay}일` + (ts.length ? `\n   (${ts.map(t=>t["공정명"]+" "+t["지연일수"]+"일, "+t["지연사유"]).join(" / ")})` : ""); }).join("\n") +
+    "\n\n개인 KPI는 높아도 담당 공정 일정이 지연됐다면 KPI 항목에 '공정 준수'가 충분히 반영되지 않았을 수 있습니다." : "불일치 직원이 없습니다.";
+  const worst = [...DATA.sites].sort((a,b) => a["차이(%p)"] - b["차이(%p)"])[0];
+  const wl = DATA.tasks.filter(t => t.site_id === worst.site_id && t["지연일수"] > 0);
+  const a3 = `가장 위험한 현장은 '${worst["현장명"]}'입니다.\n• 계획 ${worst["계획공정률(%)"]}% vs 실제 ${worst["실제공정률(%)"]}% (${worst["차이(%p)"]}%p), 준공예정 ${worst["준공예정일"]}\n• 지연 공정 ${wl.length}개: ` +
+    wl.map(t => `${t["공정명"]}(${empName(t["담당자_id"])}, ${t["지연일수"]}일)`).join(", ") +
+    `\n\n권장 조치\n1. 지연 공정 담당자와 주간 일정 점검 회의\n2. 후속 공정(${DATA.tasks.filter(t=>t.site_id===worst.site_id&&t["상태"]==="예정").slice(0,2).map(t=>t["공정명"]).join(", ")}) 일정 재산정\n3. 달성률이 낮은 직원에게 선행 공정 관리 지원 인력 배치`;
+  return [[PRESETS[0][1], a1], [PRESETS[1][1], a2], [PRESETS[2][1], a3]];
+}
+let demoRunning = false;
+async function playDemo(){
+  if (demoRunning) return; demoRunning = true;
+  add("a", "아래는 AI 호출 없이 현재 데이터로 자동 생성한 예시 대화입니다. 실제 AI 답변은 더 자세하고 자연스럽습니다.");
+  for (const [q, a] of demoTurns()) {
+    await new Promise(r => setTimeout(r, 500)); add("u", q);
+    const m = add("a", "분석 중..."); await new Promise(r => setTimeout(r, 900)); m.textContent = a;
+    $("msgs").scrollTop = $("msgs").scrollHeight;
+  }
+  demoRunning = false;
+}
+$("chips").innerHTML = PRESETS.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join("") +
+  `<button class="rep" data-r="1">자동 분석 리포트</button><button data-d="1" style="border-style:dashed">예시 대화 보기</button>`;
+$("chips").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.d) return playDemo();
+  if (b.dataset.r) ask("전체 현황 리포트를 작성해줘. 구성: 1) 한 줄 총평 2) 현장별 진행 현황과 위험도 3) 직원 성과와 공정 정합성 이슈(이름 명시) 4) 우선 조치 3가지.");
+  else ask(PRESETS[b.dataset.i][1]);
+};
+$("send").onclick = () => ask($("q").value);
+$("q").onkeydown = e => { if (e.key === "Enter" && !e.isComposing) ask($("q").value); };
+add("a", "안녕하세요. 현장 3곳, 직원 10명의 더미데이터를 기반으로 공사 진행과 직원 성과를 비교해 드립니다. 상단에 API 키를 입력하고 아래 버튼이나 질문으로 시작하세요.");
+</script>
+</body>
+</html>
